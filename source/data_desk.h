@@ -849,11 +849,11 @@ DataDeskRequireTagParameter(DataDeskNode *root, char *tag, int index, DataDeskNo
     if(tag_node)
     {
         DataDeskNode *tag_param = DataDeskGetTagParameter(tag_node, index);
-        if(result)
+        if(tag_param)
         {
             *result = tag_param;
+            found = 1;
         }
-        found = 1;
     }
     
     return found;
@@ -1698,6 +1698,7 @@ _DataDeskFWriteGraphAsC(FILE *file, DataDeskNode *root, DataDeskCPrintContext *c
                                 _DataDeskFWriteC(file, context, ")");
                             }
                             _DataDeskFWriteC(file, context, "[");
+                            context->lines_to_print = 0;
                             _DataDeskFWriteGraphAsC(file, array_size, context);
                             _DataDeskFWriteC(file, context, "]");
                         }
