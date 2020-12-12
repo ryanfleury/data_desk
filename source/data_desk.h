@@ -717,6 +717,29 @@ DataDeskCharToUpper(int c)
 }
 
 DATA_DESK_HEADER_PROC int
+DataDeskStringMatch(char *a, char *b)
+{
+    int matches = 0;
+    if(a && b)
+    {
+        matches = 1;
+        for(int i = 0;; i += 1)
+        {
+            if(a[i] != b[i])
+            {
+                matches = 0;
+                break;
+            }
+            if(a[i] == 0 || b[i] == 0)
+            {
+                break;
+            }
+        }
+    }
+    return matches;
+}
+
+DATA_DESK_HEADER_PROC int
 DataDeskStringHasAlphanumericBlock(char *string, char *substring)
 {
     int matches = 0;
@@ -803,7 +826,7 @@ DataDeskGetNodeTag(DataDeskNode *root, char *tag)
     for(DataDeskNode *tag_node = root->first_tag;
         tag_node; tag_node = tag_node->next)
     {
-        if(DataDeskStringHasAlphanumericBlock(tag_node->string, tag))
+        if(DataDeskStringMatch(tag_node->string + 1, tag))
         {
             found_tag_node = tag_node;
             break;

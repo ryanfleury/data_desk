@@ -1412,7 +1412,10 @@ ParseProcedureHeaderBody(ParseContext *context, Tokenizer *tokenizer, Token name
         root->procedure_header.return_type = InsertChild(return_type, root);
     }
     
-    root->procedure_header.first_parameter = InsertChild(declaration_list, root);
+    if(declaration_list)
+    {
+        root->procedure_header.first_parameter = InsertChild(declaration_list, root);
+    }
     
     end_parse:;
     return root;

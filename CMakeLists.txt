@@ -10,11 +10,12 @@ elseif (WIN32)
     target_compile_definitions(data_desk PRIVATE BUILD_LINUX=0 BUILD_WIN32=1)
 endif()
 
-set(DATA_DESK_ROOT "${CMAKE_CURRENT_SOURCE_DIR}" PARENT_SCOPE)
+set_property(GLOBAL PROPERTY DATA_DESK_ROOT "${CMAKE_CURRENT_SOURCE_DIR}")
 
 function(data_desk_add_custom_library)
     cmake_parse_arguments(DD "" "LIBNAME" "SRC" ${ARGN})
     add_library("${DD_LIBNAME}" SHARED ${DD_SRC})
+    get_property(DATA_DESK_ROOT GLOBAL PROPERTY DATA_DESK_ROOT)
     target_include_directories("${DD_LIBNAME}" PUBLIC "${DATA_DESK_ROOT}/source")
 endfunction()
 
