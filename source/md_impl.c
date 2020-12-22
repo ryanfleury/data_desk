@@ -907,6 +907,30 @@ MD_Parse_LexNext(MD_ParseCtx *ctx)
                 if (token.kind == MD_TokenKind_Nil) goto symbol_lex;
             }break;
             
+            // NOTE(rjf): "Bundle-of-tokens" strings (`stuff` or ```stuff```)
+            // In practice no different than a regular string, but provides an
+            // alternate syntax which will allow tools like 4coder to treat the
+            // contents as regular tokens.
+            case '`':
+            {
+                token.kind = MD_TokenKind_StringLiteral;
+                if (at + 2 < one_past_last && at[1] == '`' && at[2] == '`')
+                {
+                    skip_chop_n = 3;
+                    at += 3;
+                    MD_TokenizerScan(!(at + 2 < one_past_last && at[0] == '`' && at[1] == '`' && at[2] == '`'));
+                    at += 3;
+                }
+                else
+                {
+                    // TODO(allen): escape sequences?
+                    skip_chop_n = 1;
+                    at += 1;
+                    MD_TokenizerScan(*at != '\n' && *at != '`');
+                    if (*at == '`') at += 1;
+                }
+            }break;
+            
             // NOTE(allen): Strings
             case '"':
             {
