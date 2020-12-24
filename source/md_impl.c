@@ -1294,7 +1294,11 @@ _MD_ParseSet(MD_ParseCtx *ctx, MD_Node *parent, _MD_ParseSetFlags flags,
             
             MD_ParseResult parse = _MD_ParseOneNode(ctx);
             MD_Node *child = parse.node;
-            if(!MD_NodeIsNil(child))
+            if(MD_NodeIsNil(child))
+            {
+                goto end_parse;
+            }
+            else
             {
                 _MD_PushNodeToList(&first, &last, parent, child);
             }
