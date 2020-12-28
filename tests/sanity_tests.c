@@ -70,6 +70,12 @@ BinOpExpr(MD_ExprKind kind, MD_Expr *left, MD_Expr *right)
     return MD_MakeExpr(MD_NilNode(), kind, left, right);
 }
 
+static MD_Expr *
+TypeExpr(MD_ExprKind kind, MD_Expr *right)
+{
+    return MD_MakeExpr(MD_NilNode(), kind, MD_NilExpr(), right);
+}
+
 static MD_b32
 MatchParsedWithNode(MD_String8 string, MD_Node *tree)
 {
@@ -82,6 +88,14 @@ MatchParsedWithExpr(MD_String8 string, MD_Expr *expr)
 {
     MD_ParseResult parse = MD_ParseOneNode(MD_S8Lit(""), string);
     MD_Expr *parse_expr = MD_ParseAsExpr(parse.node->first_child, parse.node->last_child);
+    return MD_ExprDeepMatch(expr, parse_expr, 0);
+}
+
+static MD_b32
+MatchParsedWithType(MD_String8 string, MD_Expr *expr)
+{
+    MD_ParseResult parse = MD_ParseOneNode(MD_S8Lit(""), string);
+    MD_Expr *parse_expr = MD_ParseAsType(parse.node->first_child, parse.node->last_child);
     return MD_ExprDeepMatch(expr, parse_expr, 0);
 }
 
@@ -319,6 +333,25 @@ int main(void)
             MD_Expr *left  = BinOpExpr(MD_ExprKind_Multiply, AtomExpr("1"), AtomExpr("2"));
             MD_Expr *expr  = BinOpExpr(MD_ExprKind_Add, left, AtomExpr("3"));
             TestResult(MatchParsedWithExpr(string, expr));
+        }
+    }
+    
+    Test("Type Parsing")
+    {
+        {
+            MD_String8 string = MD_S8Lit("(i32)");
+            MD_Expr *expr = AtomExpr("i32");
+            TestResult(MatchParsedWithType(string, expr));
+        }
+        {
+            MD_String8 string = MD_S8Lit("(*i32)");
+            MD_Expr *expr = TypeExpr(MD_ExprKind_Pointer, AtomExpr("i32"));
+            TestResult(MatchParsedWithType(string, expr));
+        }
+        {
+            MD_String8 string = MD_S8Lit("(**i32)");
+            MD_Expr *expr = TypeExpr(MD_ExprKind_Pointer, TypeExpr(MD_ExprKind_Pointer, AtomExpr("i32")));
+            TestResult(MatchParsedWithType(string, expr));
         }
     }
     

@@ -1797,6 +1797,23 @@ struct _MD_NodeParseCtx
 };
 
 MD_PRIVATE_FUNCTION_IMPL MD_b32
+_MD_NodeParse_ConsumeAtom(_MD_NodeParseCtx *ctx, MD_Node **out)
+{
+    MD_b32 result = 0;
+    if(ctx->at->kind == MD_NodeKind_Label &&
+       MD_NodeIsNil(ctx->at->first_child))
+    {
+        result = 1;
+        if(out)
+        {
+            *out = ctx->at;
+        }
+        ctx->at = ctx->at->next;
+    }
+    return result;
+}
+
+MD_PRIVATE_FUNCTION_IMPL MD_b32
 _MD_NodeParse_ConsumeSet(_MD_NodeParseCtx *ctx, MD_Node **out)
 {
     MD_b32 result = 0;
@@ -1968,9 +1985,35 @@ MD_FUNCTION_IMPL MD_Expr *
 MD_ParseAsType(MD_Node *first, MD_Node *last)
 {
     MD_Expr *expr = MD_NilExpr();
+    MD_Expr *last_expr = expr;
     _MD_NodeParseCtx ctx_ = { first, last, last->next };
     _MD_NodeParseCtx *ctx = &ctx_;
-    
+#define _MD_PushType(x) if(MD_ExprIsNil(last_expr)) { expr = last_expr = x; } else { last_expr = last_expr->sub[1] = x; }
+    MD_Node *set = 0;
+    MD_Node *ptr = 0;
+    MD_Node *base_type = 0;
+    for(;;)
+    {
+        if(_MD_NodeParse_Consume(ctx, MD_S8Lit("*"), &ptr))
+        {
+            MD_Expr *t = MD_MakeExpr(ptr, MD_ExprKind_Pointer, MD_NilExpr(), MD_NilExpr());
+            _MD_PushType(t);
+        }
+        else if(_MD_NodeParse_ConsumeSet(ctx, &set))
+        {
+            MD_Expr *t = MD_MakeExpr(set, MD_ExprKind_Array, MD_NilExpr(), MD_NilExpr());
+            _MD_PushType(t);
+        }
+        else if(_MD_NodeParse_ConsumeAtom(ctx, &base_type))
+        {
+            MD_Expr *t = MD_MakeExpr(base_type, MD_ExprKind_Atom, MD_NilExpr(), MD_NilExpr());
+            _MD_PushType(t);
+        }
+        else
+        {
+            break;
+        }
+    }
     return expr;
 }
 
