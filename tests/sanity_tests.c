@@ -173,6 +173,25 @@ int main(void)
             MD_PushChild(tree, MakeTestNode(MD_NodeKind_Label, MD_S8Lit("c")));
             TestResult(MatchParsedWithNode(string, tree));
         }
+        
+        {
+            MD_String8 string = MD_S8Lit("foo: { (size: u64) -> *void }");
+            MD_Node *tree = MakeTestNode(MD_NodeKind_Label, MD_S8Lit("foo"));
+            MD_Node *params = MakeTestNode(MD_NodeKind_UnnamedSet, MD_S8Lit(""));
+            MD_Node *size = MakeTestNode(MD_NodeKind_Label, MD_S8Lit("size"));
+            MD_PushChild(size, MakeTestNode(MD_NodeKind_Label, MD_S8Lit("u64")));
+            MD_PushChild(params, size);
+            MD_PushChild(tree, params);
+            // TODO(rjf): This test will fail once we have digraphs implemented. Adjust the separate
+            // "-" and ">" set members, and combine them to form a single "->" set member.
+            // {
+            MD_PushChild(tree, MakeTestNode(MD_NodeKind_Label, MD_S8Lit("-")));
+            MD_PushChild(tree, MakeTestNode(MD_NodeKind_Label, MD_S8Lit(">")));
+            // }
+            MD_PushChild(tree, MakeTestNode(MD_NodeKind_Label, MD_S8Lit("*")));
+            MD_PushChild(tree, MakeTestNode(MD_NodeKind_Label, MD_S8Lit("void")));
+            TestResult(MatchParsedWithNode(string, tree));
+        }
     }
     
     Test("Non-Sets")

@@ -1279,7 +1279,7 @@ _MD_ParseSet(MD_ParseCtx *ctx, MD_Node *parent, _MD_ParseSetFlags flags,
                     goto end_parse;
                 }
             }
-            else
+            else if(paren || bracket)
             {
                 if(flags & _MD_ParseSetFlag_Paren && MD_Parse_Require(ctx, MD_S8Lit(")")))
                 {
@@ -1289,6 +1289,16 @@ _MD_ParseSet(MD_ParseCtx *ctx, MD_Node *parent, _MD_ParseSetFlags flags,
                 else if(flags & _MD_ParseSetFlag_Bracket && MD_Parse_Require(ctx, MD_S8Lit("]")))
                 {
                     parent->flags |= MD_NodeFlag_BracketRight;
+                    goto end_parse;
+                }
+            }
+            else
+            {
+                MD_Token peek = MD_Parse_PeekSkipSome(ctx, MD_TokenGroup_Whitespace | MD_TokenGroup_Comment);
+                if(MD_Parse_TokenMatch(peek, MD_S8Lit("}"), 0) ||
+                   MD_Parse_TokenMatch(peek, MD_S8Lit(")"), 0) ||
+                   MD_Parse_TokenMatch(peek, MD_S8Lit("]"), 0))
+                {
                     goto end_parse;
                 }
             }
@@ -1320,11 +1330,6 @@ _MD_ParseSet(MD_ParseCtx *ctx, MD_Node *parent, _MD_ParseSetFlags flags,
                     result |= 1;
                     child->flags |= MD_NodeFlag_BeforeSemicolon;
                     next_child_flags |= MD_NodeFlag_AfterSemicolon;
-                }
-                else if(MD_Parse_Require(ctx, MD_S8Lit("->")))
-                {
-                    child->flags |= MD_NodeFlag_BeforeArrow;
-                    next_child_flags |= MD_NodeFlag_AfterArrow;
                 }
                 result |= !!MD_Parse_Require(ctx, MD_S8Lit("\n"));
                 if(result && terminate_with_separator)
