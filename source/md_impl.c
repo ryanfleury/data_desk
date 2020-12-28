@@ -1323,7 +1323,6 @@ _MD_ParseSet(MD_ParseCtx *ctx, MD_Node *parent, _MD_ParseSetFlags flags,
                 }
                 else if(MD_Parse_Require(ctx, MD_S8Lit("->")))
                 {
-                    result |= 1;
                     child->flags |= MD_NodeFlag_BeforeArrow;
                     next_child_flags |= MD_NodeFlag_AfterArrow;
                 }
