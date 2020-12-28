@@ -353,6 +353,11 @@ int main(void)
             MD_Expr *expr = TypeExpr(MD_ExprKind_Pointer, TypeExpr(MD_ExprKind_Pointer, AtomExpr("i32")));
             TestResult(MatchParsedWithType(string, expr));
         }
+        {
+            MD_String8 string = MD_S8Lit("(*void)");
+            MD_Expr *expr = TypeExpr(MD_ExprKind_Pointer, AtomExpr("void"));
+            TestResult(MatchParsedWithType(string, expr));
+        }
     }
     
     return 0;

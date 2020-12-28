@@ -1988,7 +1988,7 @@ MD_ParseAsType(MD_Node *first, MD_Node *last)
     MD_Expr *last_expr = expr;
     _MD_NodeParseCtx ctx_ = { first, last, last->next };
     _MD_NodeParseCtx *ctx = &ctx_;
-#define _MD_PushType(x) if(MD_ExprIsNil(last_expr)) { expr = last_expr = x; } else { last_expr = last_expr->sub[1] = x; }
+#define _MD_PushType(x) if(MD_ExprIsNil(last_expr)) { expr = last_expr = x; } else { last_expr = last_expr->sub[0] = x; }
     MD_Node *set = 0;
     MD_Node *ptr = 0;
     MD_Node *base_type = 0;
@@ -2224,7 +2224,9 @@ MD_OutputType_C_LHS(FILE *file, MD_Expr *type)
         
         default:
         {
-            fprintf(file, "{ unexpected MD_ExprKind in type info }");
+            fprintf(file, "{ unexpected MD_ExprKind (%i) in type info for node \"%.*s\" }",
+                    type->kind,
+                    MD_StringExpand(type->node->whole_string));
         }break;
     }
 }
