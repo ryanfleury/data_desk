@@ -1,7 +1,7 @@
 @echo off
 
 echo ~~~ Metadesk Build ~~~
-set compile_flags= /nologo /Zi /FC /MP /I..\source\ -DDD_WIN32=1
+set compile_flags= /nologo /Zi /FC /MP /I..\source\
 
 if not exist build mkdir build
 pushd build

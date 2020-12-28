@@ -1268,6 +1268,7 @@ _MD_ParseSet(MD_ParseCtx *ctx, MD_Node *parent, _MD_ParseSetFlags flags,
     // NOTE(rjf): Parse children.
     if(brace || paren || bracket || terminate_with_separator)
     {
+        MD_NodeFlags next_child_flags = 0;
         for(MD_u64 child_idx = 0;; child_idx += 1)
         {
             if(brace)
@@ -1294,6 +1295,8 @@ _MD_ParseSet(MD_ParseCtx *ctx, MD_Node *parent, _MD_ParseSetFlags flags,
             
             MD_ParseResult parse = _MD_ParseOneNode(ctx);
             MD_Node *child = parse.node;
+            child->flags |= next_child_flags;
+            next_child_flags = 0;
             if(MD_NodeIsNil(child))
             {
                 goto end_parse;
@@ -1310,16 +1313,19 @@ _MD_ParseSet(MD_ParseCtx *ctx, MD_Node *parent, _MD_ParseSetFlags flags,
                 {
                     result |= 1;
                     child->flags |= MD_NodeFlag_BeforeComma;
+                    next_child_flags |= MD_NodeFlag_AfterComma;
                 }
                 else if(MD_Parse_Require(ctx, MD_S8Lit(";")))
                 {
                     result |= 1;
                     child->flags |= MD_NodeFlag_BeforeSemicolon;
+                    next_child_flags |= MD_NodeFlag_AfterSemicolon;
                 }
                 else if(MD_Parse_Require(ctx, MD_S8Lit("->")))
                 {
                     result |= 1;
                     child->flags |= MD_NodeFlag_BeforeArrow;
+                    next_child_flags |= MD_NodeFlag_AfterArrow;
                 }
                 result |= !!MD_Parse_Require(ctx, MD_S8Lit("\n"));
                 if(result && terminate_with_separator)

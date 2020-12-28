@@ -298,13 +298,19 @@ enum
     MD_NodeFlag_BracketRight     = (1<<3),
     MD_NodeFlag_BraceLeft        = (1<<4),
     MD_NodeFlag_BraceRight       = (1<<5),
+    
     MD_NodeFlag_BeforeSemicolon  = (1<<6),
     MD_NodeFlag_BeforeComma      = (1<<7),
     MD_NodeFlag_BeforeArrow      = (1<<8),
-    MD_NodeFlag_Numeric          = (1<<9),
-    MD_NodeFlag_Identifier       = (1<<10),
-    MD_NodeFlag_StringLiteral    = (1<<11),
-    MD_NodeFlag_CharLiteral      = (1<<12),
+    
+    MD_NodeFlag_AfterSemicolon   = (1<<9),
+    MD_NodeFlag_AfterComma       = (1<<10),
+    MD_NodeFlag_AfterArrow       = (1<<11),
+    
+    MD_NodeFlag_Numeric          = (1<<12),
+    MD_NodeFlag_Identifier       = (1<<13),
+    MD_NodeFlag_StringLiteral    = (1<<14),
+    MD_NodeFlag_CharLiteral      = (1<<15),
 };
 
 typedef MD_u32 MD_NodeMatchFlags;
