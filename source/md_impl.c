@@ -1605,6 +1605,32 @@ MD_NodeHasTag(MD_Node *node, MD_String8 tag_string)
     return !MD_NodeIsNil(MD_TagFromString(node, tag_string));
 }
 
+MD_FUNCTION_IMPL MD_CodeLoc
+MD_CodeLocFromNode(MD_Node *node)
+{
+    MD_CodeLoc loc;
+    loc.filename = node->filename;
+    loc.line = 1;
+    loc.column = 1;
+    for(MD_u64 i = 0; node->file_contents[i]; i += 1)
+    {
+        if(node->file_contents[i] == '\n')
+        {
+            loc.line += 1;
+            loc.column = 1;
+        }
+        else
+        {
+            loc.column += 1;
+        }
+        if(node->file_contents + i == node->at)
+        {
+            break;
+        }
+    }
+    return loc;
+}
+
 MD_GLOBAL MD_Expr _md_nil_expr =
 {
     &_md_nil_node,
@@ -2014,6 +2040,7 @@ MD_ParseAsType(MD_Node *first, MD_Node *last)
             break;
         }
     }
+#undef _MD_PushType
     return expr;
 }
 

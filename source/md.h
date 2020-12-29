@@ -345,6 +345,16 @@ struct MD_Node
     MD_u8 *at;
 };
 
+//~ Code Location Info.
+
+typedef struct MD_CodeLoc MD_CodeLoc;
+struct MD_CodeLoc
+{
+    MD_String8 filename;
+    int line;
+    int column;
+};
+
 //~ String-To-Node table
 
 typedef enum MD_NodeTableCollisionRule
@@ -670,16 +680,17 @@ MD_FUNCTION void     MD_PushChild(MD_Node *parent, MD_Node *new_child);
 MD_FUNCTION void     MD_PushTag(MD_Node *node, MD_Node *tag);
 
 //~ Introspection Helpers
-MD_FUNCTION MD_Node *MD_NodeFromString(MD_Node *first, MD_Node *last, MD_String8 string);
-MD_FUNCTION MD_Node *MD_NodeFromIndex(MD_Node *first, MD_Node *last, int n);
-MD_FUNCTION int      MD_IndexFromNode(MD_Node *node);
-MD_FUNCTION MD_Node *MD_NextNodeSibling(MD_Node *last, MD_String8 string);
-MD_FUNCTION MD_Node *MD_ChildFromString(MD_Node *node, MD_String8 child_string);
-MD_FUNCTION MD_Node *MD_TagFromString(MD_Node *node, MD_String8 tag_string);
-MD_FUNCTION MD_Node *MD_ChildFromIndex(MD_Node *node, int n);
-MD_FUNCTION MD_Node *MD_TagFromIndex(MD_Node *node, int n);
-MD_FUNCTION MD_Node *MD_TagArgFromIndex(MD_Node *node, MD_String8 tag_string, int n);
-MD_FUNCTION MD_b32   MD_NodeHasTag(MD_Node *node, MD_String8 tag_string);
+MD_FUNCTION MD_Node *  MD_NodeFromString(MD_Node *first, MD_Node *last, MD_String8 string);
+MD_FUNCTION MD_Node *  MD_NodeFromIndex(MD_Node *first, MD_Node *last, int n);
+MD_FUNCTION int        MD_IndexFromNode(MD_Node *node);
+MD_FUNCTION MD_Node *  MD_NextNodeSibling(MD_Node *last, MD_String8 string);
+MD_FUNCTION MD_Node *  MD_ChildFromString(MD_Node *node, MD_String8 child_string);
+MD_FUNCTION MD_Node *  MD_TagFromString(MD_Node *node, MD_String8 tag_string);
+MD_FUNCTION MD_Node *  MD_ChildFromIndex(MD_Node *node, int n);
+MD_FUNCTION MD_Node *  MD_TagFromIndex(MD_Node *node, int n);
+MD_FUNCTION MD_Node *  MD_TagArgFromIndex(MD_Node *node, MD_String8 tag_string, int n);
+MD_FUNCTION MD_b32     MD_NodeHasTag(MD_Node *node, MD_String8 tag_string);
+MD_FUNCTION MD_CodeLoc MD_CodeLocFromNode(MD_Node *node);
 // NOTE(rjf): For-Loop Helper
 #define MD_EachNode(it, first) MD_Node *it = (first); !MD_NodeIsNil(it); it = it->next
 
