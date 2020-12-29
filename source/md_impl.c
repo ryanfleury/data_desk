@@ -1634,11 +1634,12 @@ MD_CodeLocFromNode(MD_Node *node)
 MD_FUNCTION_IMPL void
 MD_NodeMessage(MD_Node *node, MD_MessageKind kind, MD_String8 str)
 {
-    char *kind_name = kind == MD_MessageKind_Error ? "Error" : "Warning";
+    char *kind_name = kind == MD_MessageKind_Error ? "error" : "warning";
     MD_CodeLoc loc = MD_CodeLocFromNode(node);
-    fprintf(stderr, "[%s] (%.*s:%i:%i) %.*s\n",
+    fprintf(stderr, "%.*s(%i:%i): %s: %.*s\n",
+            MD_StringExpand(loc.filename),
+            loc.line, loc.column,
             kind_name,
-            MD_StringExpand(loc.filename), loc.line, loc.column,
             MD_StringExpand(str));
 }
 
