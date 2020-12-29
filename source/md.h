@@ -321,16 +321,18 @@ enum
 typedef struct MD_Node MD_Node;
 struct MD_Node
 {
-    // Tree relationship pointers.
+    // Tree relationship data.
     MD_Node *next;
     MD_Node *prev;
     MD_Node *parent;
     MD_Node *first_child;
     MD_Node *last_child;
+    int child_count;
     
     // Tag list.
     MD_Node *first_tag;
     MD_Node *last_tag;
+    int tag_count;
     
     // Node info.
     MD_NodeKind kind;

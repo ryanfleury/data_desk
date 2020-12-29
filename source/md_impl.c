@@ -15,8 +15,10 @@ static MD_Node _md_nil_node =
     &_md_nil_node,         // parent
     &_md_nil_node,         // first_child
     &_md_nil_node,         // last_child
+    0,                     // child_count
     &_md_nil_node,         // first_tag
     &_md_nil_node,         // last_tag
+    0,                     // tag_count
     MD_NodeKind_Nil,       // kind
     0,                     // flags
     {0},                   // string
@@ -825,6 +827,12 @@ _MD_PushNodeToList(MD_Node **firstp, MD_Node **lastp, MD_Node *parent, MD_Node *
         *firstp = first;
         *lastp = last;
         node->parent = parent;
+        
+        if(!MD_NodeIsNil(parent))
+        {
+            if(firstp == &parent->first_child)    { parent->child_count += 1; }
+            else if(firstp == &parent->first_tag) { parent->tag_count += 1; }
+        }
     }
 }
 
