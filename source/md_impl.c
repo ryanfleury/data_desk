@@ -1636,7 +1636,7 @@ MD_NodeMessage(MD_Node *node, MD_MessageKind kind, MD_String8 str)
 {
     char *kind_name = kind == MD_MessageKind_Error ? "Error" : "Warning";
     MD_CodeLoc loc = MD_CodeLocFromNode(node);
-    fprintf(stderr, "[%s] (%.*s:%i:%i) %.*s",
+    fprintf(stderr, "[%s] (%.*s:%i:%i) %.*s\n",
             kind_name,
             MD_StringExpand(loc.filename), loc.line, loc.column,
             MD_StringExpand(str));
