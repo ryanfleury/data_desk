@@ -142,7 +142,6 @@ int main(void)
             MD_PushChild(tree, MakeTestNode(MD_NodeKind_Label, MD_S8Lit("b")));
             MD_PushChild(tree, MakeTestNode(MD_NodeKind_Label, MD_S8Lit("c")));
             TestResult(MatchParsedWithNode(string, tree));
-            TestResult(tree->child_count == 3);
         }
         {
             MD_String8 string = MD_S8Lit("(1 2 3 4 5)");
@@ -153,14 +152,12 @@ int main(void)
             MD_PushChild(tree, MakeTestNode(MD_NodeKind_Label, MD_S8Lit("4")));
             MD_PushChild(tree, MakeTestNode(MD_NodeKind_Label, MD_S8Lit("5")));
             TestResult(MatchParsedWithNode(string, tree));
-            TestResult(tree->child_count == 5);
         }
         {
             MD_String8 string = MD_S8Lit("{a}");
             MD_Node *tree = MakeTestNode(MD_NodeKind_UnnamedSet, MD_S8Lit(""));
             MD_PushChild(tree, MakeTestNode(MD_NodeKind_Label, MD_S8Lit("a")));
             TestResult(MatchParsedWithNode(string, tree));
-            TestResult(tree->child_count == 1);
         }
     }
     

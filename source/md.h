@@ -327,12 +327,10 @@ struct MD_Node
     MD_Node *parent;
     MD_Node *first_child;
     MD_Node *last_child;
-    int child_count;
     
     // Tag list.
     MD_Node *first_tag;
     MD_Node *last_tag;
-    int tag_count;
     
     // Node info.
     MD_NodeKind kind;
@@ -702,6 +700,10 @@ MD_FUNCTION MD_Node *  MD_TagFromIndex(MD_Node *node, int n);
 MD_FUNCTION MD_Node *  MD_TagArgFromIndex(MD_Node *node, MD_String8 tag_string, int n);
 MD_FUNCTION MD_b32     MD_NodeHasTag(MD_Node *node, MD_String8 tag_string);
 MD_FUNCTION MD_CodeLoc MD_CodeLocFromNode(MD_Node *node);
+MD_FUNCTION MD_i64     MD_ChildCountFromNode(MD_Node *node);
+MD_FUNCTION MD_i64     MD_TagCountFromNode(MD_Node *node);
+MD_FUNCTION MD_i64     MD_ChildCountFromNodeAndString(MD_Node *node, MD_String8 string, MD_StringMatchFlags flags);
+MD_FUNCTION MD_i64     MD_TagCountFromNodeAndString(MD_Node *node, MD_String8 string, MD_StringMatchFlags flags);
 // NOTE(rjf): For-Loop Helper
 #define MD_EachNode(it, first) MD_Node *it = (first); !MD_NodeIsNil(it); it = it->next
 

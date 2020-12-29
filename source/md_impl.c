@@ -15,10 +15,8 @@ static MD_Node _md_nil_node =
     &_md_nil_node,         // parent
     &_md_nil_node,         // first_child
     &_md_nil_node,         // last_child
-    0,                     // child_count
     &_md_nil_node,         // first_tag
     &_md_nil_node,         // last_tag
-    0,                     // tag_count
     MD_NodeKind_Nil,       // kind
     0,                     // flags
     {0},                   // string
@@ -827,12 +825,6 @@ _MD_PushNodeToList(MD_Node **firstp, MD_Node **lastp, MD_Node *parent, MD_Node *
         *firstp = first;
         *lastp = last;
         node->parent = parent;
-        
-        if(!MD_NodeIsNil(parent))
-        {
-            if(firstp == &parent->first_child)    { parent->child_count += 1; }
-            else if(firstp == &parent->first_tag) { parent->tag_count += 1; }
-        }
     }
 }
 
@@ -1637,6 +1629,56 @@ MD_CodeLocFromNode(MD_Node *node)
         }
     }
     return loc;
+}
+
+MD_FUNCTION_IMPL MD_i64
+MD_ChildCountFromNode(MD_Node *node)
+{
+    MD_i64 result = 0;
+    for(MD_EachNode(child, node->first_child))
+    {
+        result += 1;
+    }
+    return result;
+}
+
+MD_FUNCTION_IMPL MD_i64
+MD_TagCountFromNode(MD_Node *node)
+{
+    MD_i64 result = 0;
+    for(MD_EachNode(tag, node->first_tag))
+    {
+        result += 1;
+    }
+    return result;
+}
+
+MD_FUNCTION_IMPL MD_i64
+MD_ChildCountFromNodeAndString(MD_Node *node, MD_String8 string, MD_StringMatchFlags flags)
+{
+    MD_i64 result = 0;
+    for(MD_EachNode(child, node->first_child))
+    {
+        if(MD_StringMatch(child->string, string, flags))
+        {
+            result += 1;
+        }
+    }
+    return result;
+}
+
+MD_FUNCTION_IMPL MD_i64
+MD_TagCountFromNodeAndString(MD_Node *node, MD_String8 string, MD_StringMatchFlags flags)
+{
+    MD_i64 result = 0;
+    for(MD_EachNode(tag, node->first_tag))
+    {
+        if(MD_StringMatch(tag->string, string, flags))
+        {
+            result += 1;
+        }
+    }
+    return result;
 }
 
 MD_FUNCTION_IMPL void
