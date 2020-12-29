@@ -71,9 +71,9 @@ BinOpExpr(MD_ExprKind kind, MD_Expr *left, MD_Expr *right)
 }
 
 static MD_Expr *
-TypeExpr(MD_ExprKind kind, MD_Expr *right)
+TypeExpr(MD_ExprKind kind, MD_Expr *sub)
 {
-    return MD_MakeExpr(MD_NilNode(), kind, MD_NilExpr(), right);
+    return MD_MakeExpr(MD_NilNode(), kind, sub, MD_NilExpr());
 }
 
 static MD_b32
