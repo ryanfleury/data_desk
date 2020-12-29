@@ -355,6 +355,15 @@ struct MD_CodeLoc
     int column;
 };
 
+//~ Warning Levels
+
+typedef enum MD_MessageKind
+{
+    MD_MessageKind_Error,
+    MD_MessageKind_Warning,
+}
+MD_MessageKind;
+
 //~ String-To-Node table
 
 typedef enum MD_NodeTableCollisionRule
@@ -693,6 +702,14 @@ MD_FUNCTION MD_b32     MD_NodeHasTag(MD_Node *node, MD_String8 tag_string);
 MD_FUNCTION MD_CodeLoc MD_CodeLocFromNode(MD_Node *node);
 // NOTE(rjf): For-Loop Helper
 #define MD_EachNode(it, first) MD_Node *it = (first); !MD_NodeIsNil(it); it = it->next
+
+//~ Error/Warning Helpers
+MD_FUNCTION void MD_NodeMessage(MD_Node *node, MD_MessageKind kind, MD_String8 str);
+MD_FUNCTION void MD_NodeError(MD_Node *node, MD_String8 str);
+MD_FUNCTION void MD_NodeWarning(MD_Node *node, MD_String8 str);
+MD_FUNCTION void MD_NodeMessageF(MD_Node *node, MD_MessageKind kind, char *fmt, ...);
+MD_FUNCTION void MD_NodeErrorF(MD_Node *node, char *fmt, ...);
+MD_FUNCTION void MD_NodeWarningF(MD_Node *node, char *fmt, ...);
 
 //~ Tree Comparison/Verification
 MD_FUNCTION MD_b32 MD_NodeMatch(MD_Node *a, MD_Node *b, MD_StringMatchFlags str_flags, MD_NodeMatchFlags node_flags);

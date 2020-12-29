@@ -1631,6 +1631,56 @@ MD_CodeLocFromNode(MD_Node *node)
     return loc;
 }
 
+MD_FUNCTION_IMPL void
+MD_NodeMessage(MD_Node *node, MD_MessageKind kind, MD_String8 str)
+{
+    char *kind_name = kind == MD_MessageKind_Error ? "Error" : "Warning";
+    MD_CodeLoc loc = MD_CodeLocFromNode(node);
+    fprintf(stderr, "[%s] (%.*s:%i:%i) %.*s",
+            kind_name,
+            MD_StringExpand(loc.filename), loc.line, loc.column,
+            MD_StringExpand(str));
+}
+
+MD_FUNCTION_IMPL void
+MD_NodeError(MD_Node *node, MD_String8 str)
+{
+    MD_NodeMessage(node, MD_MessageKind_Error, str);
+}
+
+MD_FUNCTION_IMPL void
+MD_NodeWarning(MD_Node *node, MD_String8 str)
+{
+    MD_NodeMessage(node, MD_MessageKind_Warning, str);
+}
+
+MD_FUNCTION_IMPL void
+MD_NodeMessageF(MD_Node *node, MD_MessageKind kind, char *fmt, ...)
+{
+    va_list args;
+    va_start(args, fmt);
+    MD_NodeMessage(node, kind ,MD_PushStringFV(fmt, args));
+    va_end(args);
+}
+
+MD_FUNCTION_IMPL void
+MD_NodeErrorF(MD_Node *node, char *fmt, ...)
+{
+    va_list args;
+    va_start(args, fmt);
+    MD_NodeError(node, MD_PushStringFV(fmt, args));
+    va_end(args);
+}
+
+MD_FUNCTION_IMPL void
+MD_NodeWarningF(MD_Node *node, char *fmt, ...)
+{
+    va_list args;
+    va_start(args, fmt);
+    MD_NodeWarning(node, MD_PushStringFV(fmt, args));
+    va_end(args);
+}
+
 MD_GLOBAL MD_Expr _md_nil_expr =
 {
     &_md_nil_node,
