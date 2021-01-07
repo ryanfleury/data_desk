@@ -495,7 +495,7 @@ MD_StyledStringFromString(MD_String8 string, MD_WordStyle word_style, MD_String8
         break_on_uppercase = 1;
         for(MD_u64 i = 0; i < string.size; i += 1)
         {
-            if(!MD_CharIsAlpha(string.str[i]))
+            if(!MD_CharIsAlpha(string.str[i]) && !MD_CharIsDigit(string.str[i]))
             {
                 break_on_uppercase = 0;
                 break;
