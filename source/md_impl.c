@@ -76,7 +76,19 @@ _MD_GetCtx(void)
 MD_FUNCTION_IMPL MD_b32
 MD_CharIsAlpha(MD_u8 c)
 {
-    return ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z'));
+    return MD_CharIsAlphaUpper(c) || MD_CharIsAlphaLower(c);
+}
+
+MD_FUNCTION_IMPL MD_b32
+MD_CharIsAlphaUpper(MD_u8 c)
+{
+    return c >= 'A' && c <= 'Z';
+}
+
+MD_FUNCTION_IMPL MD_b32
+MD_CharIsAlphaLower(MD_u8 c)
+{
+    return c >= 'a' && c <= 'z';
 }
 
 MD_FUNCTION_IMPL MD_b32
@@ -94,6 +106,12 @@ MD_CharIsSymbol(MD_u8 c)
             c == ']' || c == '{' || c == '}' || c == ':' || c == ';' ||
             c == ',' || c == '<' || c == '.' || c == '>' || c == '/' ||
             c == '?' || c == '|' || c == '\\');
+}
+
+MD_FUNCTION_IMPL MD_b32
+MD_CharIsSpace(MD_u8 c)
+{
+    return c == ' ' || c == '\r' || c == '\t' || c == '\f' || c == '\v';
 }
 
 MD_FUNCTION_IMPL MD_u8
@@ -463,6 +481,135 @@ MD_CalculateCStringLength(char *cstr)
     MD_u64 i = 0;
     for(; cstr[i]; i += 1);
     return i;
+}
+
+MD_FUNCTION_IMPL MD_String8
+MD_StyledStringFromString(MD_String8 string, MD_WordStyle word_style, MD_String8 separator)
+{
+    MD_String8 result = {0};
+    
+    MD_String8List words = {0};
+    
+    MD_b32 break_on_uppercase = 0;
+    {
+        break_on_uppercase = 1;
+        for(MD_u64 i = 0; i < string.size; i += 1)
+        {
+            if(!MD_CharIsAlpha(string.str[i]))
+            {
+                break_on_uppercase = 0;
+                break;
+            }
+        }
+    }
+    
+    MD_b32 making_word = 0;
+    MD_String8 word = {0};
+    
+    for(MD_u64 i = 0; i < string.size;) 
+    {
+        if(making_word)
+        {
+            if((break_on_uppercase && MD_CharIsAlphaUpper(string.str[i])) ||
+               string.str[i] == '_' || MD_CharIsSpace(string.str[i]) ||
+               i == string.size - 1)
+            {
+                if(i == string.size - 1)
+                {
+                    word.size += 1;
+                }
+                making_word = 0;
+                MD_PushStringToList(&words, word);
+                fprintf(stderr, "WORD: \"%.*s\"\n", MD_StringExpand(word));
+            }
+            else
+            {
+                word.size += 1;
+                i += 1;
+            }
+        }
+        else
+        {
+            if(MD_CharIsAlpha(string.str[i]))
+            {
+                making_word = 1;
+                word.str = string.str + i;
+                word.size = 1;
+            }
+            i += 1;
+        }
+    }
+    
+    result.size = words.total_size;
+    if(words.node_count > 1)
+    {
+        result.size += separator.size*(words.node_count-1);
+    }
+    result.str = _MD_PushArray(_MD_GetCtx(), MD_u8, result.size);
+    
+    {
+        MD_u64 write_pos = 0;
+        for(MD_String8Node *node = words.first; node; node = node->next)
+        {
+            
+            // NOTE(rjf): Write word string to result.
+            {
+                _MD_MemoryCopy(result.str + write_pos, node->string.str, node->string.size);
+                
+                // NOTE(rjf): Transform string based on word style.
+                switch(word_style)
+                {
+                    case MD_WordStyle_UpperCamelCase:
+                    {
+                        result.str[write_pos] = MD_CharToUpper(result.str[write_pos]);
+                        for(MD_u64 i = write_pos+1; i < write_pos + node->string.size; i += 1)
+                        {
+                            result.str[i] = MD_CharToLower(result.str[i]);
+                        }
+                    }break;
+                    
+                    case MD_WordStyle_LowerCamelCase:
+                    {
+                        result.str[write_pos] = node == words.first ? MD_CharToLower(result.str[write_pos]) : MD_CharToUpper(result.str[write_pos]);
+                        for(MD_u64 i = write_pos+1; i < write_pos + node->string.size; i += 1)
+                        {
+                            result.str[i] = MD_CharToLower(result.str[i]);
+                        }
+                    }break;
+                    
+                    case MD_WordStyle_UpperCase:
+                    {
+                        for(MD_u64 i = write_pos; i < write_pos + node->string.size; i += 1)
+                        {
+                            result.str[i] = MD_CharToUpper(result.str[i]);
+                        }
+                    }break;
+                    
+                    case MD_WordStyle_LowerCase:
+                    {
+                        for(MD_u64 i = write_pos; i < write_pos + node->string.size; i += 1)
+                        {
+                            result.str[i] = MD_CharToLower(result.str[i]);
+                        }
+                    }break;
+                    
+                    default: break;
+                }
+                
+                write_pos += node->string.size;
+            }
+            
+            if(node->next)
+            {
+                _MD_MemoryCopy(result.str + write_pos, separator.str, separator.size);
+                write_pos += separator.size;
+            }
+        }
+    }
+    
+    fprintf(stderr, "RESULT: \"%.*s\"\n", MD_StringExpand(result));
+    
+    return result;
 }
 
 ////////////////////////////////

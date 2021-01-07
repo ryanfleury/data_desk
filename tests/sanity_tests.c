@@ -360,5 +360,25 @@ int main(void)
         }
     }
     
+    Test("Style Strings")
+    {
+        {
+            MD_String8 str = MD_StyledStringFromString(MD_S8Lit("THIS_IS_A_TEST"), MD_WordStyle_UpperCamelCase, MD_S8Lit(" "));
+            TestResult(MD_StringMatch(str, MD_S8Lit("This Is A Test"), 0));
+        }
+        {
+            MD_String8 str = MD_StyledStringFromString(MD_S8Lit("this_is_a_test"), MD_WordStyle_UpperCamelCase, MD_S8Lit(" "));
+            TestResult(MD_StringMatch(str, MD_S8Lit("This Is A Test"), 0));
+        }
+        {
+            MD_String8 str = MD_StyledStringFromString(MD_S8Lit("ThisIsATest"), MD_WordStyle_UpperCamelCase, MD_S8Lit(" "));
+            TestResult(MD_StringMatch(str, MD_S8Lit("This Is A Test"), 0));
+        }
+        {
+            MD_String8 str = MD_StyledStringFromString(MD_S8Lit("Here is another test."), MD_WordStyle_UpperCamelCase, MD_S8Lit(""));
+            TestResult(MD_StringMatch(str, MD_S8Lit("HereIsAnotherTest."), 0));
+        }
+    }
+    
     return 0;
 }

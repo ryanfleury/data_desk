@@ -271,10 +271,20 @@ enum
 };
 
 typedef struct MD_UnicodeConsume MD_UnicodeConsume;
-struct MD_UnicodeConsume{
+struct MD_UnicodeConsume
+{
     MD_u32 codepoint;
     MD_u32 advance;
 };
+
+typedef enum MD_WordStyle
+{
+    MD_WordStyle_UpperCamelCase,
+    MD_WordStyle_LowerCamelCase,
+    MD_WordStyle_UpperCase,
+    MD_WordStyle_LowerCase,
+}
+MD_WordStyle;
 
 //~ Node types that are used to build all ASTs.
 
@@ -594,8 +604,11 @@ struct MD_FileIter
 //~ Basic Utilities
 #define MD_Assert(c) if (!(c)) { *(volatile MD_u64 *)0 = 0; }
 MD_FUNCTION MD_b32 MD_CharIsAlpha(MD_u8 c);
+MD_FUNCTION MD_b32 MD_CharIsAlphaUpper(MD_u8 c);
+MD_FUNCTION MD_b32 MD_CharIsAlphaLower(MD_u8 c);
 MD_FUNCTION MD_b32 MD_CharIsDigit(MD_u8 c);
 MD_FUNCTION MD_b32 MD_CharIsSymbol(MD_u8 c);
+MD_FUNCTION MD_b32 MD_CharIsSpace(MD_u8 c);
 MD_FUNCTION MD_u8  MD_CharToUpper(MD_u8 c);
 MD_FUNCTION MD_u8  MD_CharToLower(MD_u8 c);
 MD_FUNCTION MD_u8  MD_CorrectSlash(MD_u8 c);
@@ -646,6 +659,8 @@ MD_FUNCTION MD_i64         MD_I64FromString(MD_String8 string);
 MD_FUNCTION MD_f64         MD_F64FromString(MD_String8 string);
 MD_FUNCTION MD_u64         MD_HashString(MD_String8 string);
 MD_FUNCTION MD_u64         MD_CalculateCStringLength(char *cstr);
+
+MD_FUNCTION MD_String8     MD_StyledStringFromString(MD_String8 string, MD_WordStyle word_style, MD_String8 separator);
 
 //~ Unicode Conversions
 MD_FUNCTION MD_UnicodeConsume MD_CodepointFromUtf8(MD_u8 *str, MD_u64 max);
