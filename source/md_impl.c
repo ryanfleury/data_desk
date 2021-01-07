@@ -520,7 +520,6 @@ MD_StyledStringFromString(MD_String8 string, MD_WordStyle word_style, MD_String8
                 }
                 making_word = 0;
                 MD_PushStringToList(&words, word);
-                fprintf(stderr, "WORD: \"%.*s\"\n", MD_StringExpand(word));
             }
             else
             {
@@ -606,8 +605,6 @@ MD_StyledStringFromString(MD_String8 string, MD_WordStyle word_style, MD_String8
             }
         }
     }
-    
-    fprintf(stderr, "RESULT: \"%.*s\"\n", MD_StringExpand(result));
     
     return result;
 }
