@@ -609,6 +609,58 @@ MD_StyledStringFromString(MD_String8 string, MD_WordStyle word_style, MD_String8
     return result;
 }
 
+MD_FUNCTION_IMPL MD_String8
+MD_StringFromNodeKind(MD_NodeKind kind)
+{
+    // NOTE(rjf): Must be kept in sync with MD_NodeKind enum.
+    static char *cstrs[MD_NodeKind_MAX] =
+    {
+        "Nil",
+        "File",
+        "Label",
+        "UnnamedSet",
+        "Tag",
+    };
+    return MD_S8CString(cstrs[kind]);
+}
+
+MD_FUNCTION_IMPL MD_String8List
+MD_StringListFromNodeFlags(MD_NodeFlags flags)
+{
+    // NOTE(rjf): Must be kept in sync with MD_NodeFlags enum.
+    static char *flag_cstrs[] =
+    {
+        "ParenLeft",
+        "ParenRight",
+        "BracketLeft",
+        "BracketRight",
+        "BraceLeft",
+        "BraceRight",
+        
+        "BeforeSemicolon",
+        "BeforeComma",
+        
+        "AfterSemicolon",
+        "AfterComma",
+        
+        "Numeric",
+        "Identifier",
+        "StringLiteral",
+        "CharLiteral",
+    };
+    
+    MD_String8List list = {0};
+    MD_u64 bits = sizeof(flags) * 8;
+    for(MD_u64 i = 0; i < bits && i < MD_ArrayCount(flag_cstrs); i += 1)
+    {
+        if(flags & (1ull << i))
+        {
+            MD_PushStringToList(&list, MD_S8CString(flag_cstrs[i]));
+        }
+    }
+    return list;
+}
+
 ////////////////////////////////
 // NOTE(allen): Unicode
 

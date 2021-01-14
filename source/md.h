@@ -603,6 +603,7 @@ struct MD_FileIter
 
 //~ Basic Utilities
 #define MD_Assert(c) if (!(c)) { *(volatile MD_u64 *)0 = 0; }
+#define MD_ArrayCount(a) (sizeof(a) / sizeof((a)[0]))
 MD_FUNCTION MD_b32 MD_CharIsAlpha(MD_u8 c);
 MD_FUNCTION MD_b32 MD_CharIsAlphaUpper(MD_u8 c);
 MD_FUNCTION MD_b32 MD_CharIsAlphaLower(MD_u8 c);
@@ -661,6 +662,10 @@ MD_FUNCTION MD_u64         MD_HashString(MD_String8 string);
 MD_FUNCTION MD_u64         MD_CalculateCStringLength(char *cstr);
 
 MD_FUNCTION MD_String8     MD_StyledStringFromString(MD_String8 string, MD_WordStyle word_style, MD_String8 separator);
+
+//~ Enum/Flag Strings
+MD_FUNCTION MD_String8      MD_StringFromNodeKind(MD_NodeKind kind);
+MD_FUNCTION MD_String8List  MD_StringListFromNodeFlags(MD_NodeFlags flags);
 
 //~ Unicode Conversions
 MD_FUNCTION MD_UnicodeConsume MD_CodepointFromUtf8(MD_u8 *str, MD_u64 max);
