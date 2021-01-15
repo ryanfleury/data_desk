@@ -17,7 +17,7 @@ static void PrintNode(MD_Node* node, FILE* file, int indent_count) {
     char binary_flags[sizeof(node->flags)*8+1];
     binary_flags[flags_bits] = '\0';
     int flag_index = 0;
-    MD_u32 flags = node->flags;
+    MD_NodeFlags flags = node->flags;
     for (int i = 0; i < flags_bits; i++) {
         binary_flags[i] = (flags&1) ? '1' : '0';
         flag_index++;
@@ -33,11 +33,16 @@ static void PrintNode(MD_Node* node, FILE* file, int indent_count) {
     if(node->string.size > 0) fprintf(file, "%s    String: %.*s,\n", indent_str, MD_StringExpand(node->string));
     if(node->whole_string.size > 0) fprintf(file, "%s    Whole String: %.*s,\n", indent_str, MD_StringExpand(node->whole_string));
     if (node->first_tag->kind != MD_NodeKind_Nil) {
-        fprintf(file, "%s    Tags: ", indent_str);
         for (MD_EachNode(tag, node->first_tag)) {
-            fprintf(file, "@%.*s, ", MD_StringExpand(tag->string));
+            fprintf(file, "%s    Tag: @%.*s\n", indent_str, MD_StringExpand(tag->string));
+            if (tag->first_child->kind != MD_NodeKind_Nil) {
+                fprintf(file, "%s        Tag Children{\n", indent_str);
+                for (MD_EachNode(arg, tag->first_child)) {
+                    PrintNode(arg, file, indent_count+3);
+                }
+                fprintf(file, "%s        }\n", indent_str);
+            }
         }
-        fprintf(file, "\n");
     }
     
     for(MD_EachNode(child, node->first_child)) {
@@ -59,15 +64,11 @@ int main(int argument_count, char **arguments)
     
     for(MD_EachNode(root, first))
     {
-        MD_String8 filename = MD_TrimExtension(MD_TrimFolder(root->filename));
-        MD_String8List str_list = {0};
-        MD_PushStringToList(&str_list, MD_S8CString("parsed_"));
-        MD_PushStringToList(&str_list, filename);
-        MD_PushStringToList(&str_list, MD_S8CString(".txt"));
-        char* out_file = (char*)MD_PushStringCopy(MD_JoinStringList(str_list)).str;
-        printf("Parse Input -> Output: %s -> %s\n", root->filename.str, out_file);
+        MD_String8 code_filename = MD_TrimExtension(MD_TrimFolder(root->filename));
+        MD_String8 info_filename = MD_PushStringF("parsed_%.*s.txt", MD_StringExpand(code_filename));
+        printf("Parse Input -> Output: %.*s -> %.*s\n", MD_StringExpand(code_filename), MD_StringExpand(info_filename));
         
-        FILE* file = fopen(out_file, "w");
+        FILE* file = fopen((char *)info_filename.str, "w");
         for(MD_EachNode(node, root->first_child))
         {
             PrintNode(node, file, 0);

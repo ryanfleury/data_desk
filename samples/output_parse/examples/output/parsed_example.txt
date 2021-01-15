@@ -4,7 +4,7 @@ Node{
     Flag Names: BraceLeft, BraceRight, Identifier
     String: foo,
     Whole String: foo,
-    Tags: @struct, 
+    Tag: @struct
     Node{
         Kind: Label,
         Flags: 11000001000100000000000000000000,
@@ -39,7 +39,8 @@ Node{
     Flag Names: BraceLeft, BraceRight, Identifier
     String: bar,
     Whole String: bar,
-    Tags: @struct, @test_tag, 
+    Tag: @struct
+    Tag: @test_tag
     Node{
         Kind: Label,
         Flags: 00000000000100000000000000000000,
