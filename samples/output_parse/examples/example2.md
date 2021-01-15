@@ -1,6 +1,6 @@
 @sets a_set : {
     named_set : {1, 3, 7},
-	{not, named, set}
+	{not, named, set},
 	@tag_with_params(p1, p2, p3) { e1, e2, e3 },
 }
 

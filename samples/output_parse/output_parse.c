@@ -2,21 +2,6 @@
 #include "md.h"
 #include "md.c"
 
-#define ARRAY_COUNT(Array) (sizeof(Array) / sizeof((Array)[0]))
-
-// NOTE(pmh): This must be kept up to date with MD_NodeFlags in md.h
-const char* flag_names[] = {
-    "ParenLeft", "ParenRight", "BracketLeft", "BracketRight", "BraceLeft", "BraceRight",
-    "BeforeSemicolon", "BeforeComma",
-    "AfterSemicolon", "AfterComma",
-    "Numeric", "Identifier", "StringLiteral", "CharLiteral"
-};
-
-// NOTE: this must be kept up to date with MD_NodeKind in md.h
-const char* node_kinds[] = {
-    "Nil", "File", "Label", "UnnamedSet", "Tag", "MAX"
-};
-
 #define INDENT_SPACES 4
 static void PrintNode(MD_Node* node, FILE* file, int indent_count) {
     char* indent_str = _MD_PushArray(_MD_GetCtx(), char, indent_count*INDENT_SPACES+1);
@@ -26,7 +11,7 @@ static void PrintNode(MD_Node* node, FILE* file, int indent_count) {
     indent_str[indent_count*INDENT_SPACES] = '\0';
     
     fprintf(file, "%sNode{\n", indent_str);
-    fprintf(file, "%s    Kind: %s,\n", indent_str, node_kinds[node->kind]);
+    fprintf(file, "%s    Kind: %.*s,\n", indent_str, MD_StringExpand(MD_StringFromNodeKind(node->kind)));
     
     int flags_bits = sizeof(node->flags)*8;
     char binary_flags[sizeof(node->flags)*8+1];
@@ -41,12 +26,10 @@ static void PrintNode(MD_Node* node, FILE* file, int indent_count) {
     
     fprintf(file, "%s    Flags: %s,\n", indent_str, binary_flags);
     fprintf(file, "%s    Flag Names: ", indent_str, binary_flags);
-    for (int i = 0; i < ARRAY_COUNT(flag_names); i++) {
-        if (binary_flags[i] == '1') {
-            fprintf(file, "%s, ", flag_names[i]);
-        }
-    }
-    fprintf(file, "\n");
+    MD_String8List flags_list = MD_StringListFromNodeFlags(node->flags);
+    MD_String8 flag_names = MD_JoinStringListWithSeparator(flags_list, MD_S8CString(", "));
+    fprintf(file, "%.*s\n", MD_StringExpand(flag_names));
+    
     if(node->string.size > 0) fprintf(file, "%s    String: %.*s,\n", indent_str, MD_StringExpand(node->string));
     if(node->whole_string.size > 0) fprintf(file, "%s    Whole String: %.*s,\n", indent_str, MD_StringExpand(node->whole_string));
     if (node->first_tag->kind != MD_NodeKind_Nil) {
@@ -65,12 +48,6 @@ static void PrintNode(MD_Node* node, FILE* file, int indent_count) {
 
 int main(int argument_count, char **arguments)
 {
-    if (ARRAY_COUNT(node_kinds)-1 != MD_NodeKind_MAX) {
-        printf("node_kinds strings array length-1 does not match MD_NodeKind_MAX. Aborting.\n");
-        printf("%I64u != %i\n", ARRAY_COUNT(node_kinds)-1, MD_NodeKind_MAX);
-        return;
-    }
-    
     // NOTE(pmh): Parse all the files passed in via command line.
     MD_Node *first = MD_NilNode();
     MD_Node *last = MD_NilNode();
