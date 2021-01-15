@@ -3,6 +3,18 @@
 #include "md.c"
 
 #define INDENT_SPACES 2
+static char* GetOneIndent() {
+    static char* one_indent = 0;
+    if (!one_indent) {
+        one_indent = _MD_PushArray(_MD_GetCtx(), char, INDENT_SPACES+1);
+        for (int i = 0; i < INDENT_SPACES; i++) {
+            one_indent[i] = ' ';
+        }
+        one_indent[INDENT_SPACES] = '\0';
+    }
+    return one_indent;
+}
+
 static void PrintNode(MD_Node* node, FILE* file, int indent_count) {
     char* indent_str = _MD_PushArray(_MD_GetCtx(), char, indent_count*INDENT_SPACES+1);
     for (int i = 0; i < indent_count*INDENT_SPACES; i++) {
@@ -10,11 +22,7 @@ static void PrintNode(MD_Node* node, FILE* file, int indent_count) {
     }
     indent_str[indent_count*INDENT_SPACES] = '\0';
     
-    char* one_indent = _MD_PushArray(_MD_GetCtx(), char, INDENT_SPACES+1);
-    for (int i = 0; i < INDENT_SPACES; i++) {
-        one_indent[i] = ' ';
-    }
-    one_indent[INDENT_SPACES] = '\0';
+    char* one_indent = GetOneIndent();
     
     fprintf(file, "%sNode{\n", indent_str);
     fprintf(file, "%s%sKind: %.*s,\n", indent_str, one_indent, MD_StringExpand(MD_StringFromNodeKind(node->kind)));
