@@ -874,7 +874,10 @@ DataDeskRequireTagParameter(DataDeskNode *root, char *tag, int index, DataDeskNo
         DataDeskNode *tag_param = DataDeskGetTagParameter(tag_node, index);
         if(tag_param)
         {
-            *result = tag_param;
+            if(result)
+            {
+                *result = tag_param;
+            }
             found = 1;
         }
     }
