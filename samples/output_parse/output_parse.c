@@ -2,7 +2,7 @@
 #include "md.h"
 #include "md.c"
 
-#define INDENT_SPACES 4
+#define INDENT_SPACES 2
 static void PrintNode(MD_Node* node, FILE* file, int indent_count) {
     char* indent_str = _MD_PushArray(_MD_GetCtx(), char, indent_count*INDENT_SPACES+1);
     for (int i = 0; i < indent_count*INDENT_SPACES; i++) {
@@ -10,8 +10,14 @@ static void PrintNode(MD_Node* node, FILE* file, int indent_count) {
     }
     indent_str[indent_count*INDENT_SPACES] = '\0';
     
+    char* one_indent = _MD_PushArray(_MD_GetCtx(), char, INDENT_SPACES+1);
+    for (int i = 0; i < INDENT_SPACES; i++) {
+        one_indent[i] = ' ';
+    }
+    one_indent[INDENT_SPACES] = '\0';
+    
     fprintf(file, "%sNode{\n", indent_str);
-    fprintf(file, "%s    Kind: %.*s,\n", indent_str, MD_StringExpand(MD_StringFromNodeKind(node->kind)));
+    fprintf(file, "%s%sKind: %.*s,\n", indent_str, one_indent, MD_StringExpand(MD_StringFromNodeKind(node->kind)));
     
     int flags_bits = sizeof(node->flags)*8;
     char binary_flags[sizeof(node->flags)*8+1];
@@ -24,23 +30,23 @@ static void PrintNode(MD_Node* node, FILE* file, int indent_count) {
         flags >>= 1;
     }
     
-    fprintf(file, "%s    Flags: %s,\n", indent_str, binary_flags);
-    fprintf(file, "%s    Flag Names: ", indent_str, binary_flags);
+    fprintf(file, "%s%sFlags: %s,\n", indent_str, one_indent, binary_flags);
+    fprintf(file, "%s%sFlag Names: ", indent_str, one_indent, binary_flags);
     MD_String8List flags_list = MD_StringListFromNodeFlags(node->flags);
     MD_String8 flag_names = MD_JoinStringListWithSeparator(flags_list, MD_S8CString(", "));
     fprintf(file, "%.*s\n", MD_StringExpand(flag_names));
     
-    if(node->string.size > 0) fprintf(file, "%s    String: %.*s,\n", indent_str, MD_StringExpand(node->string));
-    if(node->whole_string.size > 0) fprintf(file, "%s    Whole String: %.*s,\n", indent_str, MD_StringExpand(node->whole_string));
+    if(node->string.size > 0) fprintf(file, "%s%sString: %.*s,\n", indent_str, one_indent, MD_StringExpand(node->string));
+    if(node->whole_string.size > 0) fprintf(file, "%s%sWhole String: %.*s,\n", indent_str, one_indent, MD_StringExpand(node->whole_string));
     if (node->first_tag->kind != MD_NodeKind_Nil) {
         for (MD_EachNode(tag, node->first_tag)) {
-            fprintf(file, "%s    Tag: @%.*s\n", indent_str, MD_StringExpand(tag->string));
+            fprintf(file, "%s%sTag: @%.*s\n", indent_str, one_indent, MD_StringExpand(tag->string));
             if (tag->first_child->kind != MD_NodeKind_Nil) {
-                fprintf(file, "%s        Tag Children{\n", indent_str);
+                fprintf(file, "%s%s%sTag Children{\n", indent_str, one_indent, one_indent);
                 for (MD_EachNode(arg, tag->first_child)) {
                     PrintNode(arg, file, indent_count+3);
                 }
-                fprintf(file, "%s        }\n", indent_str);
+                fprintf(file, "%s%s%s}\n", indent_str, one_indent, one_indent);
             }
         }
     }
