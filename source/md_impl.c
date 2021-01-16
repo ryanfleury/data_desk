@@ -451,6 +451,10 @@ MD_JoinStringList(MD_String8List list)
 MD_FUNCTION_IMPL MD_String8
 MD_JoinStringListWithSeparator(MD_String8List list, MD_String8 separator)
 {
+    if (list.node_count == 0)
+    {
+        return MD_S8Lit("");
+    }
     MD_String8 string = {0};
     string.size = list.total_size + (list.node_count - 1)*separator.size;
     string.str = _MD_PushArray(_MD_GetCtx(), MD_u8, string.size);
