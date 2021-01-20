@@ -448,6 +448,29 @@ MD_JoinStringList(MD_String8List list)
     return string;
 }
 
+MD_FUNCTION_IMPL MD_String8
+MD_JoinStringListWithSeparator(MD_String8List list, MD_String8 separator)
+{
+    if (list.node_count == 0)
+    {
+        return MD_S8Lit("");
+    }
+    MD_String8 string = {0};
+    string.size = list.total_size + (list.node_count - 1)*separator.size;
+    string.str = _MD_PushArray(_MD_GetCtx(), MD_u8, string.size);
+    MD_u64 write_pos = 0;
+    for(MD_String8Node *node = list.first; node; node = node->next)
+    {
+        _MD_MemoryCopy(string.str + write_pos, node->string.str, node->string.size);
+        write_pos += node->string.size;
+        if (node != list.last){
+            _MD_MemoryCopy(string.str + write_pos, separator.str, separator.size);
+            write_pos += separator.size;
+        }
+    }
+    return string;
+}
+
 MD_FUNCTION_IMPL MD_i64
 MD_I64FromString(MD_String8 string)
 {

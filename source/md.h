@@ -655,6 +655,7 @@ MD_FUNCTION MD_String8List MD_SplitString(MD_String8 string, int split_count, MD
 MD_FUNCTION MD_String8List MD_SplitStringByString(MD_String8 string, MD_String8 split);
 MD_FUNCTION MD_String8List MD_SplitStringByCharacter(MD_String8 string, MD_u8 character);
 MD_FUNCTION MD_String8     MD_JoinStringList(MD_String8List list);
+MD_FUNCTION MD_String8     MD_JoinStringListWithSeparator(MD_String8List list, MD_String8 separator);
 // TODO(rjf): Radix
 MD_FUNCTION MD_i64         MD_I64FromString(MD_String8 string);
 MD_FUNCTION MD_f64         MD_F64FromString(MD_String8 string);
