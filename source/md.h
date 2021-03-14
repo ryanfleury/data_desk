@@ -222,7 +222,7 @@ typedef int64_t  MD_b64;
 typedef float    MD_f32;
 typedef double   MD_f64;
 
-//~ Basic UTF-8 string types.
+//~ Basic Unicode string types.
 
 typedef struct MD_String8 MD_String8;
 struct MD_String8
@@ -361,8 +361,8 @@ typedef struct MD_CodeLoc MD_CodeLoc;
 struct MD_CodeLoc
 {
     MD_String8 filename;
-    int line;
-    int column;
+    MD_u32 line;
+    MD_u32 column;
 };
 
 //~ Warning Levels
@@ -426,7 +426,7 @@ typedef enum MD_TokenKind
     
     // A group of symbolic characters, where symbolic characters means any of the following:
     // ~!@#$%^&*()-+=[{]}:;<>,./?|\
-   //
+    //
     // Groups of multiple characters are only allowed in specific circumstances. Most of these
     // are only 1 character long, but some groups are allowed:
     //
@@ -575,7 +575,7 @@ struct MD_CommandLine
 {
     // TODO(rjf): Linked-list vs. array?
     MD_String8 *arguments;
-    int argument_count;
+    MD_u32 argument_count;
 };
 
 //~ File system access types.
@@ -604,6 +604,8 @@ struct MD_FileIter
 //~ Basic Utilities
 #define MD_Assert(c) if (!(c)) { *(volatile MD_u64 *)0 = 0; }
 #define MD_ArrayCount(a) (sizeof(a) / sizeof((a)[0]))
+
+//~ Characters
 MD_FUNCTION MD_b32 MD_CharIsAlpha(MD_u8 c);
 MD_FUNCTION MD_b32 MD_CharIsAlphaUpper(MD_u8 c);
 MD_FUNCTION MD_b32 MD_CharIsAlphaLower(MD_u8 c);
@@ -637,6 +639,7 @@ MD_FUNCTION MD_u64         MD_FindSubstring(MD_String8 str, MD_String8 substring
                                             MD_u64 start_pos, MD_StringMatchFlags flags);
 MD_FUNCTION MD_u64         MD_FindLastSubstring(MD_String8 str, MD_String8 substring, MD_StringMatchFlags flags);
 
+// TODO(allen): Chop & Skip?
 MD_FUNCTION MD_String8     MD_TrimExtension(MD_String8 string);
 MD_FUNCTION MD_String8     MD_TrimFolder(MD_String8 string);
 MD_FUNCTION MD_String8     MD_ExtensionFromPath(MD_String8 string);
@@ -648,12 +651,12 @@ MD_FUNCTION MD_String8     MD_PushStringF(char *fmt, ...);
 
 #define MD_StringExpand(s) (int)(s).size, (s).str
 
+// Allen's doc wave cursor //
+
 MD_FUNCTION void           MD_PushStringToList(MD_String8List *list, MD_String8 string);
 MD_FUNCTION void           MD_PushStringListToList(MD_String8List *list, MD_String8List *to_push);
-// TODO(rjf): Just simplify to a single splitter
 MD_FUNCTION MD_String8List MD_SplitString(MD_String8 string, int split_count, MD_String8 *splits);
-MD_FUNCTION MD_String8List MD_SplitStringByString(MD_String8 string, MD_String8 split);
-MD_FUNCTION MD_String8List MD_SplitStringByCharacter(MD_String8 string, MD_u8 character);
+// TODO(allen): Single version with MD_StringJoin
 MD_FUNCTION MD_String8     MD_JoinStringList(MD_String8List list);
 MD_FUNCTION MD_String8     MD_JoinStringListWithSeparator(MD_String8List list, MD_String8 separator);
 // TODO(rjf): Radix
