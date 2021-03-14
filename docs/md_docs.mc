@@ -70,13 +70,13 @@
  BracketRight,
  BraceLeft,
  BraceRight,
- 
+
  BeforeSemicolon,
  BeforeComma,
- 
+
  AfterSemicolon,
  AfterComma,
- 
+
  Numeric,
  Identifier,
  StringLiteral,
@@ -96,18 +96,18 @@
  parent: *MD_Node,
  first_child: *MD_Node,
  last_child: *MD_Node,
- 
+
  // Tag list.
  first_tag: *MD_Node,
  last_tag: *MD_Node,
- 
+
  // Node info.
  kind: MD_NodeKind,
  flags: MD_NodeFlags,
  string: MD_String8,
  whole_string: MD_String8,
  string_hash: MD_u64,
- 
+
  // Source code location information.
  filename: MD_String8,
  file_contents: *MD_u8,
@@ -155,27 +155,27 @@
 
 @enum MD_TokenKind: {
  Nil,
- 
+
  RegularMin,
- 
+
  // A group of characters that begins with an underscore or alphabetic character,
  // and consists of numbers, alphabetic characters, or underscores after that.
  Identifier,
- 
+
  // A group of characters beginning with a numeric character or a '-', and then
  // consisting of only numbers, alphabetic characters, or '.'s after that.
  NumericLiteral,
- 
+
  // A group of arbitrary characters, grouped together by a " character, OR by a
  // """ symbol at the beginning and end of the group. String literals beginning with
  // " are to only be specified on a single line, but """ strings can exist across
  // many lines.
  StringLiteral,
- 
+
  // A group of arbitrary characters, grouped together by a ' character at the
  // beginning, and a ' character at the end.
  CharLiteral,
- 
+
  // A group of symbolic characters. The symbolic characters are:
  // ~!@#$%^&*()-+=[{]}:;<>,./?|\
  //
@@ -184,16 +184,16 @@
  //
  // "<<", ">>", "<=", ">=", "+=", "-=", "*=", "/=", "::", ":=", "==", "&=", "|=", "->"
  Symbol,
- 
+
  RegularMax,
- 
+
  Comment,
- 
+
  WhitespaceMin,
  Whitespace,
  Newline,
  WhitespaceMax,
- 
+
  MAX,
 };
 
@@ -248,12 +248,12 @@
  // MD_BinaryExprKindFromNode
  // MD_PreUnaryExprKindFromNode
  // MD_PostUnaryExprKindFromNode
- 
+
  Nil,
- 
+
  // NOTE(rjf): Atom
  Atom,
- 
+
  // NOTE(rjf): Access
  Dot,
  Arrow,
@@ -261,14 +261,14 @@
  Subscript,
  Dereference,
  Reference,
- 
+
  // NOTE(rjf): Arithmetic
  Add,
  Subtract,
  Multiply,
  Divide,
  Mod,
- 
+
  // NOTE(rjf): Comparison
  IsEqual,
  IsNotEqual,
@@ -276,12 +276,12 @@
  GreaterThan,
  LessThanEqualTo,
  GreaterThanEqualTo,
- 
+
  // NOTE(rjf): Bools
  BoolAnd,
  BoolOr,
  BoolNot,
- 
+
  // NOTE(rjf): Bitwise
  BitAnd,
  BitOr,
@@ -289,14 +289,14 @@
  BitXor,
  LeftShift,
  RightShift,
- 
+
  // NOTE(rjf): Unary numeric
  Negative,
- 
+
  // NOTE(rjf): Type
  Pointer,
  Array,
- 
+
  MAX,
 }
 
@@ -513,5 +513,217 @@
 @macro MD_StringExpand: { s, }
 
 
+@func MD_PushStringToList: {
+ list: *MD_String8List,
+ string: MD_String8,
+};
 
+@func MD_PushStringListToList: {
+ list: *MD_String8List,
+ to_push: *MD_String8List,
+};
+
+@func MD_SplitString: {
+ string: MD_String8,
+ split_count: MD_u32,
+ splits: *MD_String8,
+ return: MD_String8List
+};
+
+@func MD_JoinStringList: {
+ list: MD_String8List,
+ return: MD_String8,
+};
+
+@func MD_JoinStringListWithSeparator: {
+ list: MD_String8List,
+ separator: MD_String8
+ return: MD_String8,
+};
+
+@func MD_I64FromString: {
+ string: MD_String8,
+ radix: MD_u32,
+ return: MD_i64,
+};
+
+@func MD_F64FromString: {
+ string: MD_String8,
+ return: MD_f64,
+};
+
+@func MD_HashString: {
+ string: MD_String8,
+ return: MD_u64,
+};
+
+@func MD_CalculateCStringLength: {
+ cstr: *char,
+ return: MD_u64,
+};
+
+@func MD_StyledStringFromString: {
+ string: MD_String8,
+ word_style: MD_WordStyle,
+ separator: MD_String8,
+ return: MD_String8
+};
+
+////////////////////////////////
+//~ Enum/Flag Strings
+
+@func MD_StringFromNodeKind: {
+ kind: MD_NodeKind,
+ return: MD_String8,
+};
+
+@func MD_StringListFromNodeFlags: {
+ flags: MD_NodeFlags,
+ return: MD_String8List,
+};
+
+////////////////////////////////
+//~ Unicode Conversions
+
+@func MD_CodepointFromUtf8: {
+ str: MD_u8,
+ max: MD_u64,
+ return: MD_UnicodeConsume,
+};
+
+@func MD_CodepointFromUtf16: {
+ str: *MD_u16,
+ max: MD_u64,
+ return: MD_UnicodeConsume,
+};
+
+@func MD_Utf8FromCodepoint: {
+ out: *MD_u8,
+ codepoint: MD_u32,
+ return: MD_u32,
+};
+
+@func MD_Utf16FromCodepoint: {
+ out: *MD_u16,
+ codepoint: MD_u32,
+ return: MD_u32,
+};
+
+@func MD_S8FromS16: {
+ str: MD_String16,
+ return: MD_String8,
+};
+
+@func MD_S16FromS8: {
+ str: MD_String8,
+ return: MD_String16,
+};
+
+@func MD_S8FromS32: {
+ str: MD_String32,
+ return: MD_String8,
+};
+
+@func MD_S32FromS8: {
+ str: MD_String8,
+ return: MD_String32,
+};
+
+////////////////////////////////
+//~ String-To-Node-List Table
+
+@func MD_NodeTable_Lookup: {
+ table: *MD_NodeTable,
+ string: MD_String8,
+ return: *MD_NodeTableSlot,
+};
+
+@func MD_NodeTable_Insert: {
+ table: *MD_NodeTable,
+ collision_rule: MD_NodeTableCollisionRule,
+ string: MD_String8,
+ node: *MD_Node,
+ return: MD_b32,
+};
+
+////////////////////////////////
+//~ Parsing
+
+@func MD_TokenKindIsWhitespace: {
+ MD_TokenKind kind,
+ return: MD_b32,
+};
+
+@func MD_TokenKindIsComment: {
+ MD_TokenKind kind,
+ return: MD_b32,
+};
+
+@func MD_TokenKindIsRegular: {
+ MD_TokenKind kind,
+ return: MD_b32,
+};
+
+@func MD_Parse_InitializeCtx: {
+ MD_String8 filename,
+ MD_String8 contents,
+ return: MD_ParseCtx,
+};
+
+@func MD_Parse_Bump: {
+ ctx: *MD_ParseCtx,
+ token: MD_Token,
+};
+
+@func MD_Parse_BumpNext: {
+ ctx: *MD_ParseCtx,
+};
+
+@func MD_Parse_LexNext: {
+ ctx: *MD_ParseCtx,
+ return: MD_Token,
+};
+
+@func MD_Parse_PeekSkipSome: {
+ ctx: *MD_ParseCtx,
+ skip_groups: MD_TokenGroups,
+ return: MD_Token,
+};
+
+@func MD_Parse_TokenMatch: {
+ token: MD_Token,
+ string: MD_String8,
+ flags: MD_StringMatchFlags,
+ return: MD_b32,
+};
+
+@func MD_Parse_Require: {
+ ctx: *MD_ParseCtx,
+ string: MD_String8,
+ return: MD_b32,
+};
+
+@func MD_Parse_RequireKind: {
+ ctx: *MD_ParseCtx,
+ kind: MD_TokenKind,
+ out_token: *MD_Token,
+ return: MD_b32,
+};
+
+@func MD_ParseOneNode: {
+ filename: MD_String8,
+ contents: MD_String8,
+ return: MD_ParseResult,
+};
+
+@func MD_ParseWholeString: {
+ filename: MD_String8,
+ contents: MD_String8,
+ return: *MD_Node,
+};
+
+@func MD_ParseWholeFile: {
+ filename: MD_String8,
+ return: *MD_Node,
+};
 

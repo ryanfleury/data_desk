@@ -650,11 +650,9 @@ MD_FUNCTION MD_String8     MD_PushStringF(char *fmt, ...);
 
 #define MD_StringExpand(s) (int)(s).size, (s).str
 
-// Allen's doc wave cursor //
-
 MD_FUNCTION void           MD_PushStringToList(MD_String8List *list, MD_String8 string);
 MD_FUNCTION void           MD_PushStringListToList(MD_String8List *list, MD_String8List *to_push);
-MD_FUNCTION MD_String8List MD_SplitString(MD_String8 string, int split_count, MD_String8 *splits);
+MD_FUNCTION MD_String8List MD_SplitString(MD_String8 string, MD_u32 split_count, MD_String8 *splits);
 // TODO(allen): Single version with MD_StringJoin
 MD_FUNCTION MD_String8     MD_JoinStringList(MD_String8List list);
 MD_FUNCTION MD_String8     MD_JoinStringListWithSeparator(MD_String8List list, MD_String8 separator);
@@ -684,11 +682,12 @@ MD_FUNCTION MD_NodeTableSlot *MD_NodeTable_Lookup(MD_NodeTable *table, MD_String
 MD_FUNCTION MD_b32            MD_NodeTable_Insert(MD_NodeTable *table, MD_NodeTableCollisionRule collision_rule, MD_String8 string, MD_Node *node);
 
 //~ Parsing
-MD_FUNCTION MD_Token       MD_ZeroToken(void);
 MD_FUNCTION MD_b32         MD_TokenKindIsWhitespace(MD_TokenKind kind);
 MD_FUNCTION MD_b32         MD_TokenKindIsComment(MD_TokenKind kind);
 MD_FUNCTION MD_b32         MD_TokenKindIsRegular(MD_TokenKind kind);
 MD_FUNCTION MD_ParseCtx    MD_Parse_InitializeCtx(MD_String8 filename, MD_String8 contents);
+
+// Allen's doc wave cursor //
 
 MD_FUNCTION void           MD_Parse_Bump(MD_ParseCtx *ctx, MD_Token token);
 MD_FUNCTION void           MD_Parse_BumpNext(MD_ParseCtx *ctx);

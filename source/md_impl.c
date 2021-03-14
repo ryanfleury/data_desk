@@ -376,7 +376,7 @@ MD_PushStringListToList(MD_String8List *list, MD_String8List *to_push)
 }
 
 MD_FUNCTION_IMPL MD_String8List
-MD_SplitString(MD_String8 string, int split_count, MD_String8 *splits)
+MD_SplitString(MD_String8 string, MD_u32 split_count, MD_String8 *splits)
 {
     MD_String8List list = {0};
     
@@ -1001,13 +1001,6 @@ MD_NodeTable_Insert(MD_NodeTable *table, MD_NodeTableCollisionRule collision_rul
     }
     
     return !!slot;
-}
-
-MD_FUNCTION_IMPL MD_Token
-MD_ZeroToken(void)
-{
-    MD_Token token = {0};
-    return token;
 }
 
 MD_FUNCTION_IMPL MD_b32
