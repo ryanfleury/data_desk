@@ -650,23 +650,23 @@
 //~ Parsing
 
 @func MD_TokenKindIsWhitespace: {
- MD_TokenKind kind,
+ kind: MD_TokenKind,
  return: MD_b32,
 };
 
 @func MD_TokenKindIsComment: {
- MD_TokenKind kind,
+ kind: MD_TokenKind,
  return: MD_b32,
 };
 
 @func MD_TokenKindIsRegular: {
- MD_TokenKind kind,
+ kind: MD_TokenKind,
  return: MD_b32,
 };
 
 @func MD_Parse_InitializeCtx: {
- MD_String8 filename,
- MD_String8 contents,
+ filename: MD_String8,
+ contents: MD_String8,
  return: MD_ParseCtx,
 };
 
@@ -726,4 +726,186 @@
  filename: MD_String8,
  return: *MD_Node,
 };
+
+////////////////////////////////
+//~ Tree/List Building
+
+@func MD_NodeIsNil: {
+ node: *MD_Node,
+ return: MD_b32,
+};
+
+@func MD_NilNode: {
+ return: *MD_Node,
+};
+
+@func MD_MakeNodeFromToken: {
+ kind: MD_NodeKind,
+ filename: MD_String8,
+ file: *MD_u8,
+ at: *MD_u8,
+ token: MD_Token,
+ return: *MD_Node,
+};
+
+@func MD_MakeNodeFromString: {
+ kind: MD_NodeKind,
+ filename: MD_String8,
+ file: *MD_u8,
+ at: *MD_u8,
+ string: MD_String8
+ return: *MD_Node,
+};
+
+@func MD_PushSibling: {
+ first: **MD_Node,
+ last: **MD_Node,
+ parent: *MD_Node,
+ new_sibling: *MD_Node,
+};
+
+@func MD_PushChild: {
+ parent: *MD_Node,
+ new_child: *MD_Node,
+};
+
+@func MD_PushTag: {
+ node: *MD_Node,
+ tag: *MD_Node,
+};
+
+////////////////////////////////
+//~ Introspection Helpers
+
+@func MD_NodeFromString: {
+ first: *MD_Node,
+ last: *MD_Node,
+ string: MD_String8,
+ return: MD_Node,
+};
+
+@func MD_NodeFromIndex: {
+ first: *MD_Node,
+ last: *MD_Node,
+ n: int,
+ return: *MD_Node,
+};
+
+@func   MD_IndexFromNode: {
+ node: *MD_Node,
+ return: int,
+};
+
+@func MD_NextNodeSibling: {
+ last: *MD_Node,
+ string: MD_String8,
+ return: *MD_Node,
+};
+
+@func MD_ChildFromString: {
+ node: *MD_Node,
+ child_string: MD_String8,
+ return: *MD_Node,
+};
+
+@func MD_TagFromString: {
+ node: *MD_Node,
+ tag_string: MD_String8,
+ return: *MD_Node,
+};
+
+@func MD_ChildFromIndex: {
+ node: *MD_Node,
+ n: int,
+ return: *MD_Node,
+};
+
+@func MD_TagFromIndex: {
+ node: *MD_Node,
+ n: int,
+ return: *MD_Node,
+};
+
+@func MD_TagArgFromIndex: {
+ node: *MD_Node,
+ tag_string: MD_String8,
+ n: int,
+ return: *MD_Node,
+};
+
+@func MD_NodeHasTag: {
+ node: *MD_Node,
+ tag_string: MD_String8,
+ return: MD_b32,
+};
+
+@func MD_CodeLocFromNode: {
+ node: *MD_Node,
+ return: MD_CodeLoc,
+};
+
+@func MD_ChildCountFromNode: {
+ node: *MD_Node,
+ return: MD_i64,
+};
+
+@func MD_TagCountFromNode: {
+ node: *MD_Node,
+ return: MD_i64,
+};
+
+@func MD_ChildCountFromNodeAndString: {
+ node: *MD_Node,
+ string: MD_String8,
+ flags: MD_StringMatchFlags,
+ return: MD_i64,
+};
+
+@func MD_TagCountFromNodeAndString: {
+ node: *MD_Node,
+ string: MD_String8,
+ flags: MD_StringMatchFlags,
+ return: MD_i64,
+};
+
+@macro MD_EachNode: { it, first, };
+
+////////////////////////////////
+//~ Error/Warning Helpers
+
+@func MD_NodeMessage: {
+ node: *MD_Node,
+ kind: MD_MessageKind,
+ str: MD_String8,
+};
+
+@func MD_NodeError: {
+ node: *MD_Node,
+ str: MD_String8,
+};
+
+@func MD_NodeWarning: {
+ node: *MD_Node,
+ str: MD_String8,
+};
+
+@func MD_NodeMessageF: {
+ node: *MD_Node,
+ kind: MD_MessageKind,
+ fmt: *char,
+ "..."
+};
+
+@func MD_NodeErrorF: {
+ node: *MD_Node,
+ fmt: *char,
+ "...",
+};
+
+@func MD_NodeWarningF: {
+ node: *MD_Node,
+ fmt: *char,
+ "...",
+};
+
 

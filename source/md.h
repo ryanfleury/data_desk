@@ -681,13 +681,12 @@ MD_FUNCTION MD_String32    MD_S32FromS8(MD_String8 str);
 MD_FUNCTION MD_NodeTableSlot *MD_NodeTable_Lookup(MD_NodeTable *table, MD_String8 string);
 MD_FUNCTION MD_b32            MD_NodeTable_Insert(MD_NodeTable *table, MD_NodeTableCollisionRule collision_rule, MD_String8 string, MD_Node *node);
 
+// TODO(allen): review this section
 //~ Parsing
 MD_FUNCTION MD_b32         MD_TokenKindIsWhitespace(MD_TokenKind kind);
 MD_FUNCTION MD_b32         MD_TokenKindIsComment(MD_TokenKind kind);
 MD_FUNCTION MD_b32         MD_TokenKindIsRegular(MD_TokenKind kind);
 MD_FUNCTION MD_ParseCtx    MD_Parse_InitializeCtx(MD_String8 filename, MD_String8 contents);
-
-// Allen's doc wave cursor //
 
 MD_FUNCTION void           MD_Parse_Bump(MD_ParseCtx *ctx, MD_Token token);
 MD_FUNCTION void           MD_Parse_BumpNext(MD_ParseCtx *ctx);
@@ -735,6 +734,8 @@ MD_FUNCTION void MD_NodeWarning(MD_Node *node, MD_String8 str);
 MD_FUNCTION void MD_NodeMessageF(MD_Node *node, MD_MessageKind kind, char *fmt, ...);
 MD_FUNCTION void MD_NodeErrorF(MD_Node *node, char *fmt, ...);
 MD_FUNCTION void MD_NodeWarningF(MD_Node *node, char *fmt, ...);
+
+// Allen's doc wave cursor //
 
 //~ Tree Comparison/Verification
 MD_FUNCTION MD_b32 MD_NodeMatch(MD_Node *a, MD_Node *b, MD_StringMatchFlags str_flags, MD_NodeMatchFlags node_flags);
