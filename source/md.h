@@ -4,7 +4,6 @@
 //
 // - Expression/Type helper
 //   - Parsing things as a type, getting basic type info
-// - Radix for MD_I64FromString
 // - Freeing calls, allow hooking the allocator with an arena or
 //   something so that someone can use this for work at an application/game's
 //   runtime
@@ -659,8 +658,7 @@ MD_FUNCTION MD_String8List MD_SplitString(MD_String8 string, int split_count, MD
 // TODO(allen): Single version with MD_StringJoin
 MD_FUNCTION MD_String8     MD_JoinStringList(MD_String8List list);
 MD_FUNCTION MD_String8     MD_JoinStringListWithSeparator(MD_String8List list, MD_String8 separator);
-// TODO(rjf): Radix
-MD_FUNCTION MD_i64         MD_I64FromString(MD_String8 string);
+MD_FUNCTION MD_i64         MD_I64FromString(MD_String8 string, MD_u32 radix);
 MD_FUNCTION MD_f64         MD_F64FromString(MD_String8 string);
 MD_FUNCTION MD_u64         MD_HashString(MD_String8 string);
 MD_FUNCTION MD_u64         MD_CalculateCStringLength(char *cstr);

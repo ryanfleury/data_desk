@@ -421,18 +421,6 @@ MD_SplitString(MD_String8 string, int split_count, MD_String8 *splits)
     return list;
 }
 
-MD_FUNCTION_IMPL MD_String8List
-MD_SplitStringByString(MD_String8 string, MD_String8 split)
-{
-    return MD_SplitString(string, 1, &split);
-}
-
-MD_FUNCTION_IMPL MD_String8List
-MD_SplitStringByCharacter(MD_String8 string, MD_u8 character)
-{
-    return MD_SplitStringByString(string, MD_S8(&character, 1));
-}
-
 MD_FUNCTION_IMPL MD_String8
 MD_JoinStringList(MD_String8List list)
 {
@@ -472,11 +460,40 @@ MD_JoinStringListWithSeparator(MD_String8List list, MD_String8 separator)
 }
 
 MD_FUNCTION_IMPL MD_i64
-MD_I64FromString(MD_String8 string)
+MD_I64FromString(MD_String8 string, MD_u32 radix)
 {
-    char str[64];
-    _MD_WriteStringToBuffer(string, sizeof(str), str);
-    return atoll(str);
+    MD_Assert(2 <= radix && radix <= 16);
+    
+    static MD_u8 char_to_value[] = {
+        0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,
+        0x08,0x09,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,
+        0xFF,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F,0xFF,
+        0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,
+    };
+    
+    // get the sign
+    MD_i64 sign = +1;
+    MD_u64 i =  0;
+    if (string.size > 0){
+        if (string.str[i] == '-'){
+            i = 1;
+            sign = -1;
+        }
+        if (string.str[i] == '+'){
+            i = 1;
+        }
+    }
+    
+    // get the value
+    MD_i64 value = 0;
+    for (;i < string.size; i += 1){
+        value *= radix;
+        MD_u8 c = string.str[i];
+        value += char_to_value[(c - 0x30)&0x1F];
+    }
+    value *= sign;
+    
+    return(value);
 }
 
 MD_FUNCTION_IMPL MD_f64
@@ -2376,7 +2393,7 @@ MD_EvaluateExpr_I64(MD_Expr *expr)
         _MD_BinaryOp(Multiply, *);
         _MD_BinaryOp(Divide,   /);
 #undef _MD_BinaryOp
-        case MD_ExprKind_Atom: { result = MD_I64FromString(expr->node->string); }break;
+        case MD_ExprKind_Atom: { result = MD_I64FromString(expr->node->string, 10); }break;
         default: break;
     }
     return result;
@@ -2683,7 +2700,7 @@ MD_CommandLine_FlagIntegers(MD_CommandLine *cmdln, MD_String8 string, int out_co
             {
                 for(int out_idx = 0; out_idx < out_count; out_idx += 1)
                 {
-                    out[out_idx] = MD_I64FromString(cmdln->arguments[i+out_idx+1]);
+                    out[out_idx] = MD_I64FromString(cmdln->arguments[i+out_idx+1], 10);
                     cmdln->arguments[i+out_idx+1].str = 0;
                     cmdln->arguments[i+out_idx+1].size = 0;
                 }
