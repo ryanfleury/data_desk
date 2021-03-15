@@ -255,7 +255,7 @@ MD_FindLastSubstring(MD_String8 str, MD_String8 substring, MD_StringMatchFlags f
 }
 
 MD_FUNCTION_IMPL MD_String8
-MD_TrimExtension(MD_String8 string)
+MD_ChopExtension(MD_String8 string)
 {
     MD_u64 period_pos = MD_FindLastSubstring(string, MD_S8Lit("."), 0);
     if(period_pos < string.size)
@@ -266,7 +266,7 @@ MD_TrimExtension(MD_String8 string)
 }
 
 MD_FUNCTION_IMPL MD_String8
-MD_TrimFolder(MD_String8 string)
+MD_SkipFolder(MD_String8 string)
 {
     MD_u64 slash_pos = MD_FindLastSubstring(string, MD_S8Lit("/"), MD_StringMatchFlag_SlashInsensitive);
     if(slash_pos < string.size)
