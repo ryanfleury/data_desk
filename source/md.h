@@ -734,9 +734,10 @@ MD_FUNCTION void MD_NodeMessageF(MD_Node *node, MD_MessageKind kind, char *fmt, 
 MD_FUNCTION void MD_NodeErrorF(MD_Node *node, char *fmt, ...);
 MD_FUNCTION void MD_NodeWarningF(MD_Node *node, char *fmt, ...);
 
-// Allen's doc wave cursor //
-
 //~ Tree Comparison/Verification
+// TODO(allen): seems like it would be cool to use the node match flags to
+// opt into comparing kind and strings; also we could get away with smooshing the
+// flags together probably.
 MD_FUNCTION MD_b32 MD_NodeMatch(MD_Node *a, MD_Node *b, MD_StringMatchFlags str_flags, MD_NodeMatchFlags node_flags);
 MD_FUNCTION MD_b32 MD_NodeDeepMatch(MD_Node *a, MD_Node *b, MD_StringMatchFlags str_flags, MD_NodeMatchFlags node_flags);
 
@@ -757,6 +758,8 @@ MD_FUNCTION MD_b32        MD_ExprDeepMatch(MD_Expr *a, MD_Expr *b, MD_StringMatc
 //~ Generation
 MD_FUNCTION void MD_OutputTree(FILE *file, MD_Node *node);
 MD_FUNCTION void MD_OutputExpr(FILE *file, MD_Expr *expr);
+
+//~ C Language Generation
 MD_FUNCTION void MD_OutputTree_C_String(FILE *file, MD_Node *node);
 MD_FUNCTION void MD_OutputTree_C_Struct(FILE *file, MD_Node *node);
 MD_FUNCTION void MD_OutputTree_C_Decl(FILE *file, MD_Node *node);

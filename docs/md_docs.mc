@@ -472,12 +472,12 @@
  return: MD_u64,
 };
 
-@func MD_TrimExtension: {
+@func MD_ChopExtension: {
  string: MD_String8,
  return: MD_String8,
 };
 
-@func MD_TrimFolder: {
+@func MD_SkipFolder: {
  string: MD_String8,
  return: MD_String8,
 };
@@ -791,7 +791,7 @@
  return: *MD_Node,
 };
 
-@func   MD_IndexFromNode: {
+@func MD_IndexFromNode: {
  node: *MD_Node,
  return: int,
 };
@@ -907,5 +907,209 @@
  fmt: *char,
  "...",
 };
+
+////////////////////////////////
+//~ Tree Comparison/Verification
+
+@func MD_NodeMatch: {
+ a: *MD_Node,
+ b: *MD_Node,
+ str_flags: MD_StringMatchFlags,
+ node_flags: MD_NodeMatchFlags,
+ return: MD_b32,
+};
+
+@func MD_NodeDeepMatch: {
+ a: *MD_Node,
+ b: *MD_Node,
+ str_flags: MD_StringMatchFlags,
+ node_flags: MD_NodeMatchFlags,
+ return: MD_b32,
+};
+
+////////////////////////////////
+//~ Expression and Type-Expression Helper
+
+@func MD_NilExpr: {
+ return: *MD_Expr,
+};
+
+@func MD_ExprIsNil: {
+ expr: *MD_Expr,
+ return: MD_b32,
+};
+
+@func MD_PreUnaryExprKindFromNode: {
+ node: *MD_Node,
+ return: MD_ExprKind,
+};
+
+@func MD_BinaryExprKindFromNode: {
+ node: *MD_Node,
+ return: MD_ExprKind,
+};
+
+@func MD_ExprPrecFromExprKind: {
+ kind: MD_ExprKind,
+ return: MD_ExprPrec,
+};
+
+@func MD_MakeExpr: {
+ node: *MD_Node,
+ kind: MD_ExprKind,
+ left: *MD_Expr,
+ right: *MD_Expr,
+ return: *MD_Expr,
+};
+
+@func MD_ParseAsExpr: {
+ first: *MD_Node,
+ last: *MD_Node,
+ return: *MD_Expr,
+};
+
+@func MD_ParseAsType: {
+ first: *MD_Node,
+ last: *MD_Node,
+ return: *MD_Expr,
+};
+
+@func MD_EvaluateExpr_I64: {
+ expr: *MD_Expr,
+ return: MD_i64,
+};
+
+@func MD_EvaluateExpr_F64: {
+ expr: *MD_Expr,
+ return: MD_f64,
+};
+
+@func MD_ExprMatch: {
+ a: *MD_Expr,
+ b: *MD_Expr,
+ str_flags: MD_StringMatchFlags,
+ return: MD_b32,
+};
+
+@func MD_ExprDeepMatch: {
+ a: *MD_Expr,
+ b: *MD_Expr,
+ str_flags: MD_StringMatchFlags,
+ return: MD_b32,
+};
+
+////////////////////////////////
+//~ Generation
+
+@func MD_OutputTree: {
+ file: *FILE,
+ node: *MD_Node,
+};
+
+@func MD_OutputExpr: {
+ file: *FILE,
+ expr: *MD_Expr,
+};
+
+////////////////////////////////
+//~ C Language Generation
+
+@func MD_OutputTree_C_String: {
+ file: *FILE,
+ node: *MD_Node,
+};
+
+@func MD_OutputTree_C_Struct: {
+ file: *FILE,
+ node: *MD_Node,
+};
+
+@func MD_OutputTree_C_Decl: {
+ file: *FILE,
+ node: *MD_Node,
+};
+
+@func MD_Output_C_DeclByNameAndType: {
+ file: *FILE,
+ name: MD_String8,
+ type: *MD_Expr,
+};
+
+@func MD_OutputType_C_LHS: {
+ file: *FILE,
+ type: *MD_Expr,
+};
+
+@func MD_OutputType_C_RHS: {
+ file: *FILE,
+ type: *MD_Expr,
+};
+
+////////////////////////////////
+//~ Command Line Argument Helper
+
+@func MD_CommandLine_Start: {
+ argument_count: int,
+ arguments: **char,
+ return: MD_CommandLine,
+};
+
+@func MD_CommandLine_Flag: {
+ cmdln: *MD_CommandLine,
+ string: MD_String8,
+ return: MD_b32,
+};
+
+@func MD_CommandLine_FlagStrings: {
+ cmdln: *MD_CommandLine,
+ string: MD_String8,
+ out_count: int,
+ out: *MD_String8,
+ return: MD_b32,
+};
+
+@func MD_CommandLine_FlagIntegers: {
+ cmdln: *MD_CommandLine,
+ string: MD_String8,
+ out_count: int,
+ out: *MD_i64,
+ return: MD_b32,
+};
+
+@func MD_CommandLine_FlagString: {
+ cmdln: *MD_CommandLine,
+ string: MD_String8,
+ out: *MD_String8,
+ return: MD_b32,
+};
+
+@func MD_CommandLine_FlagInteger: {
+ cmdln: *MD_CommandLine,
+ string: MD_String8,
+ out: *MD_i64,
+ return: MD_b32,
+};
+
+@func MD_CommandLine_Increment: {
+ cmdln: *MD_CommandLine,
+ string_ptr: **MD_String8,
+ return: MD_b32,
+};
+
+////////////////////////////////
+//~ File System
+
+@func MD_LoadEntireFile: {
+ filename: MD_String8,
+ return: MD_String8,
+};
+
+@func MD_FileIterIncrement: {
+ it: *MD_FileIter,
+ path: MD_String8,
+ out_info: *MD_FileInfo,
+ return: MD_b32,
+};
+
 
 
